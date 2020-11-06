@@ -1,0 +1,158 @@
+* Fall 2020 - Lab 11
+
+* Last name:
+
+* First name:
+
+* GitHub username:
+
+* Notes:
+
+
+  
+* General instructions:
+- Fill in your name and GitHub username on top.
+- Use the Notes section to add any notes to the instructor.
+- The main lab description can be found here:
+  https://maryash.github.io/135/labs/lab_11.html 
+
+* specific instructions and requirementsfor lab 11
+
+This and future labs will start with a mostly empty repository. 
+
+You must:
+
+1. Use ~doctest.h~ based tests to test your solutions unless a
+   specific task says otherwise.
+2. Have a ~Makefile~ with at least the following targets: 
+   1. ~main~ to build *main* which will run your project
+   2. ~tests~ to build *tests* which will run the doctest based tests
+   3. ~clean~ which will remove *.o* files
+3. At least three  ~.cpp~ files - ~main.cpp~, ~tests.cpp~ and at least
+   one more with solutions to the labs. You will also need the
+   appropriate ~.h~ files.
+
+
+* Notes
+
+This lab introduces a full class with both variables and methods. In
+C++ the typical way to implement them (with one exception which we'll
+cover later) is by placing the declarations in a ~.h~ file and the
+implementations in a ~.cpp~ file of the same name.
+
+So, for the Particle example in the lab, you'd have ~particle.h~ which
+would contain the specification: 
+
+#+begin_src c++
+#pragma once
+class Particle {
+private:
+  double x;  // position, 2D coordinates
+  double y;
+  double vx; // velocity
+  double vy;
+public:
+  // accessor functions for the current position of the particle
+  double getX();
+  double getY();
+  // move the particle
+  void move(double dt);
+  // Constructor. Called to initialize private member variables
+  // when a particle object gets created
+  Particle(double posx, double posy, double velx, double vely);
+  // Default constructor, will assume pos=(0,0), vel=(0,0)
+  Particle();
+};
+#+end_src
+
+and ~particle.cpp~ which would contain the implementation: 
+
+#+begin_src c++
+#incluide "particle.h"
+
+double Particle::getX() { 
+  return x; 
+}
+double Particle::getY() { 
+  return y; 
+}
+void Particle::move(double dt) {
+  x += vx * dt;  y += vy * dt;
+}
+Particle::Particle(double posx, double posy, double velx, double vely) {
+  x = posx;   y = posy;
+  vx = velx;  vy = vely;
+}
+Particle::Particle() {
+  x = 0;   y = 0;
+  vx = 0;  vy = 0;
+}
+
+
+#+end_src
+
+Note that ~particle.cpp~ includes ~particle.h~.
+
+A ~main.cpp~ that uses *Particle* might look like this: 
+
+#+begin_src c++
+#include <iostream>
+#include "particle.h"
+
+int main() {
+  // Create a particle object using the constructor
+  Particle particle1 (11.0, 12.0,  0.5, -0.4); 
+  // Create another particle object, but this time
+  // using the default constructor
+  Particle particle2; 
+  particle1.move(10.0);
+  std::cout << particle1.getX() << endl; 
+  std::cout << particle1.getY() << endl; 
+
+  std::cout << particle1.x << endl;       // Compile-time ERROR, 
+                                     // cannot access
+                                     // private variable
+  particle1.x += particle1.vx * 5.0; // same ERROR
+}
+
+#+end_src
+
+Note that you include the ~.h~ file but the ~cpp~ files are compiled
+together.
+
+
+* Task Specific instructions
+** Tasks A 
+
+Start your program by creating a class *Profile* as specified in the
+lab. The specification should go in a file named ~profile.h~ and the
+implementation in ~profile.cpp~. Use it in ~main.cpp~ and test its
+functionality in ~tests.cpp~ using doctest. 
+
+
+** Task B
+
+Add the *Network* class to your program using the files ~network.h~
+and ~network.cpp~. Run from main and test via doctests from tests. 
+
+As usual, there should be no keyboard input.
+
+Also note the main lab which says you'll need the *--std=c++11*
+flag. 
+
+** Task C
+
+Add the functionality specified in the main lab. Test *follow* using
+doctest. You should do this by testing the state of variables within
+your objects.
+
+You should not test *printDot* through doctest but just output the
+graph code when run from main. I would highly recommend you play with
+Graphviz and dot mentioned in the lab as it's a very useful and cool
+tool.
+
+** Task D (Bonus) - optional
+
+If you implement task D, add the functionality to your program  and
+run from main. Test via doctest as usual.
+
