@@ -16,19 +16,49 @@ int main() {
     // std::cout << p2.getFullName() << std::endl; // Tarma Roving (@tarma1)
 
 
+    // Network nw;
+    // std::cout << nw.addUser("mario", "Mario") << std::endl;     // true (1)
+    // std::cout << nw.addUser("luigi", "Luigi") << std::endl;     // true (1)
+
+    // std::cout << nw.addUser("mario", "Mario2") << std::endl;    // false (0)
+    // std::cout << nw.addUser("mario 2", "Mario2") << std::endl;  // false (0)
+    // std::cout << nw.addUser("mario-2", "Mario2") << std::endl;  // false (0)
+
+    // for(int i = 2; i < 20; i++) {
+    //     std::cout << nw.addUser("mario" + std::to_string(i), "Mario" + std::to_string(i)) << std::endl;   // true (1)
+    // }
+
+    // std::cout << nw.addUser("yoshi", "Yoshi") << std::endl;     // false (0)
+
+
     Network nw;
-    std::cout << nw.addUser("mario", "Mario") << std::endl;     // true (1)
-    std::cout << nw.addUser("luigi", "Luigi") << std::endl;     // true (1)
+    // add three users
+    nw.addUser("mario", "Mario");
+    nw.addUser("luigi", "Luigi");
+    nw.addUser("yoshi", "Yoshi");
 
-    std::cout << nw.addUser("mario", "Mario2") << std::endl;    // false (0)
-    std::cout << nw.addUser("mario 2", "Mario2") << std::endl;  // false (0)
-    std::cout << nw.addUser("mario-2", "Mario2") << std::endl;  // false (0)
+    // make them follow each other
+    nw.follow("mario", "luigi");
+    nw.follow("mario", "yoshi");
+    nw.follow("luigi", "mario");
+    nw.follow("luigi", "yoshi");
+    nw.follow("yoshi", "mario");
+    nw.follow("yoshi", "luigi");
 
-    for(int i = 2; i < 20; i++) {
-        std::cout << nw.addUser("mario" + std::to_string(i), "Mario" + std::to_string(i)) << std::endl;   // true (1)
+    // add a user who does not follow others
+    nw.addUser("wario", "Wario");
+    
+    // add clone users who follow @mario
+    for(int i = 2; i < 6; i++) {
+        std::string usrn = "mario" + std::to_string(i);
+        std::string dspn = "Mario " + std::to_string(i);
+        nw.addUser(usrn, dspn);
+        nw.follow(usrn, "mario");
     }
+    // additionally, make @mario2 follow @luigi
+    nw.follow("mario2", "luigi");
 
-    std::cout << nw.addUser("yoshi", "Yoshi") << std::endl;     // false (0)
+    nw.printDot();
     
     return 0;
 }
