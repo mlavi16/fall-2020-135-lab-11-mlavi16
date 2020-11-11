@@ -7,6 +7,7 @@ Network::Network() {
     // Constructor: 
     //   makes an empty network (numUsers = 0) 
     //   sets all elements of the matrix following to false, so no one is following anyone.
+    //   sets number of posts to 0
     numUsers = 0;
 
     for (int i = 0; i < MAX_USERS; i++) {
@@ -14,6 +15,8 @@ Network::Network() {
             following[i][j] = false;
         }
     }
+
+    numPosts = 0;
 }
 
 bool Network::addUser(std::string usrn, std::string dspn) {
@@ -98,4 +101,37 @@ void Network::printDot() {
 
 std::string usrnFormat(std::string usrn) {
     return "\"@" + usrn + "\"";
+}
+
+bool Network::writePost(std::string usrn, std::string msg) {
+    // Adds a new post to the posts array. 
+    // It performs successfully if the username is found in the network 
+    // and the posts array is not full (returns true). 
+    // Otherwise, nothing is added and the function returns false.
+
+    if ((findID(usrn) != -1) && (numPosts < MAX_POSTS)) {
+        Post post = {usrn, msg};
+        posts[numPosts] = post;
+        numPosts += 1;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Network::printTimeline(std::string usrn) {
+    // Prints out the timeline of the user usrn. 
+    // The timeline of a user is the list of all posts by the user and by the people they follow, 
+    // presented in reverse-chronological order. 
+    if (findID(usrn) == -1) {
+        return false;
+    }
+
+    for (int i = (numPosts - 1); i >= 0; i--) {
+        if ((posts[i].username == usrn) || (following[findID(usrn)][findID(posts[i].username)] == true)) {
+            std::cout << profiles[findID(usrn)].getFullName() << ": " << posts[i].message << std::endl;
+        }
+    }
+
+    return true;
 }

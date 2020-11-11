@@ -1,5 +1,5 @@
 OBJECTS = profile.o network.o
-HFILES = profile.h network.h
+HFILES = profile.h network.h post.h
 CXXFLAGS = --std=c++11
 
 main: main.o ${OBJECTS}
@@ -12,7 +12,7 @@ main.o: main.cpp ${HFILES}
 
 tests.o: tests.cpp doctest.h ${HFILES}
 
-profile.o: profile.cpp ${HFILES}
+profile.o: profile.cpp profile.h
 
 network.o: network.cpp ${HFILES}
 
