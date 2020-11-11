@@ -129,7 +129,7 @@ bool Network::printTimeline(std::string usrn) {
 
     for (int i = (numPosts - 1); i >= 0; i--) {
         if ((posts[i].username == usrn) || (following[findID(usrn)][findID(posts[i].username)] == true)) {
-            std::cout << profiles[findID(usrn)].getFullName() << ": " << posts[i].message << std::endl;
+            std::cout << profiles[findID(posts[i].username)].getFullName() << ": " << posts[i].message << std::endl;
         }
     }
 
