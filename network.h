@@ -25,6 +25,13 @@ public:
 
     bool writePost(std::string usrn, std::string msg);
     bool printTimeline(std::string usrn);
+
+    //functions for tests.cpp
+    int testFindID(std::string usrn);
+    Profile testNetwork(std::string usrn);
+    bool testFollow(std::string usrn1, std::string usrn2);
+    int testNumPosts();
+    std::string returnTimeline(std::string usrn);
 };
 
 std::string usrnFormat(std::string usrn);

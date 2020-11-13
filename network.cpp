@@ -1,5 +1,4 @@
 #include "network.h"
-#include "profile.h"
 #include <cctype>
 #include <string>
 
@@ -119,19 +118,41 @@ bool Network::writePost(std::string usrn, std::string msg) {
     }
 }
 
-bool Network::printTimeline(std::string usrn) {
-    // Prints out the timeline of the user usrn. 
+std::string Network::returnTimeline(std::string usrn) {
+    // Returns out the timeline of the user usrn. 
     // The timeline of a user is the list of all posts by the user and by the people they follow, 
     // presented in reverse-chronological order. 
-    if (findID(usrn) == -1) {
-        return false;
-    }
+    std::string timeline = "";
 
     for (int i = (numPosts - 1); i >= 0; i--) {
         if ((posts[i].username == usrn) || (following[findID(usrn)][findID(posts[i].username)] == true)) {
-            std::cout << profiles[findID(posts[i].username)].getFullName() << ": " << posts[i].message << std::endl;
+            timeline += profiles[findID(posts[i].username)].getFullName() + ": " + posts[i].message + "\n";
         }
     }
+    return timeline;
+}
 
+bool Network::printTimeline(std::string usrn) {
+    // Prints out the timeline of the user usrn. 
+    if (findID(usrn) == -1) {
+        return false;
+    }
+    std::cout << returnTimeline(usrn);
     return true;
+}
+
+int Network::testFindID(std::string usrn) {
+    return findID(usrn);
+}
+
+Profile Network::testNetwork(std::string usrn) {
+    return profiles[findID(usrn)];
+}
+
+bool Network::testFollow(std::string usrn1, std::string usrn2) {
+    return following[findID(usrn1)][findID(usrn2)];
+}
+
+int Network::testNumPosts() {
+    return numPosts;
 }
