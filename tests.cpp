@@ -32,32 +32,38 @@ TEST_CASE("profile- task A") {
 
 TEST_CASE("Network.addUser()- task B") {
     Network net;
-    net.addUser("Maya2020", "maya 5:)!");
+    CHECK(net.addUser("Maya2020", "maya 5:)!") == true);
     CHECK(net.testFindID("Maya2020") == 0);
     CHECK(net.testFindID("maya2020") == -1);
     Profile p = net.testNetwork("Maya2020");
     CHECK(p.getFullName() == "maya 5:)! (@Maya2020)");
 
-    net.addUser("coolio", "coolio");
+    CHECK(net.addUser("coolio", "coolio") == true);
     CHECK(net.testFindID("coolio") == 1);
     p = net.testNetwork("coolio");
     CHECK(p.getFullName() == "coolio (@coolio)");
+    CHECK(net.testFindID("Maya2020") == 0);
 
-    net.addUser("Maya2020", "maya"); // repeat usernames should not be added
+    CHECK(net.addUser("hawk", "") == true);
+    CHECK(net.testFindID("hawk") == 2);
+
+    CHECK(net.addUser("Maya2020", "maya") == false); // repeat usernames should not be added
     CHECK(net.testFindID("Maya2020") != 2); 
     p = net.testNetwork("Maya2020");
     CHECK(p.getFullName() == "maya 5:)! (@Maya2020)");
 
     //usernames should be non-empty alphanumeric strings
-    net.addUser("sherlock holmes", "Lock123");
-    net.addUser("hey!", "hey!");
-    net.addUser("", "hi");
+    CHECK(net.addUser("sherlock holmes", "Lock123") == false);
+    CHECK(net.addUser("sherlock_holmes", "sherlock_holmes") == false);
+    CHECK(net.addUser("hey!", "hey!") == false);
+    CHECK(net.addUser("", "hi") == false);
+    
     CHECK(net.testFindID("sherlock") == -1);
     CHECK(net.testFindID("hey!") == -1);
     CHECK(net.testFindID("") == -1);
 
-    for (int i = 2; i < 20; i++) {
-        net.addUser("name" + std::to_string(i), "wow" + std::to_string(i));
+    for (int i = 3; i < 20; i++) {
+        net.addUser("name" + std::to_string(i), "wow");
     }
     CHECK(net.testFindID("name4") == 4);
     CHECK(net.testFindID("name19") == 19);
@@ -65,7 +71,7 @@ TEST_CASE("Network.addUser()- task B") {
     CHECK(net.testFindID("name20") == -1);
 
     // network is full, more usernames should not be added
-    net.addUser("Steve", "steve00");
+    CHECK(net.addUser("Steve", "steve00") == false);
     CHECK(net.testFindID("Steve") == -1);
 }
 
@@ -91,7 +97,7 @@ TEST_CASE("Network.follow()- task C") {
     CHECK(n.testFollow("bob", "ted") == true);
     CHECK(n.testFollow("bob", "mario") == false);
     CHECK(n.testFollow("bob", "paul") == false);
-\
+
     CHECK(n.testFollow("ted", "paul") == true);
     CHECK(n.testFollow("ted", "mario") == false);
     CHECK(n.testFollow("ted", "bob") == false);
@@ -99,7 +105,7 @@ TEST_CASE("Network.follow()- task C") {
     CHECK(n.testFollow("paul", "ted") == true);
     CHECK(n.testFollow("paul", "mario") == true);
     CHECK(n.testFollow("paul", "bob") == false);
-\
+
     CHECK(n.testFollow("mario", "paul") == false);
     CHECK(n.testFollow("mario", "bob") == false);
     CHECK(n.testFollow("mario", "ted") == false);
@@ -139,6 +145,19 @@ TEST_CASE("posts- task D") {
     CHECK(n.writePost("Tim", "what is up???") == true);
     CHECK(n.writePost("natalie", "hiyo") == true);
     CHECK(n.writePost("Maya", "balloons") == true);
+
+    CHECK(n.testNumPosts() == 4);
+    std::string maya = "mayay (@Maya): balloons\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
+    CHECK(n.returnTimeline("Maya") == maya);
+    std::string lucy = "mayay (@Maya): balloons\nnat (@natalie): hiyo\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
+    CHECK(n.returnTimeline("Lucy") == lucy); //should return every post bc lucy follows everyone
+    std::string tim = "tom (@Tim): what is up???\n";
+    CHECK(n.returnTimeline("Tim") == tim);
+    std::string natalie = "nat (@natalie): hiyo\n";
+    CHECK(n.returnTimeline("natalie") == natalie);
+    std::string tal = "";
+    CHECK(n.returnTimeline("Tal") == tal);
+
     CHECK(n.writePost("Tal", "explosions") == true);
     CHECK(n.writePost("Lucy", "bingo") == true);
     CHECK(n.writePost("natalie", "partayy") == true);
@@ -150,15 +169,15 @@ TEST_CASE("posts- task D") {
     CHECK(n.writePost("", "yippie") == false);
 
     CHECK(n.testNumPosts() == 10);
-    std::string maya = "lucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nlucky (@Lucy): bingo\ntal10 (@Tal): explosions\nmayay (@Maya): balloons\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
+    maya = "lucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nlucky (@Lucy): bingo\ntal10 (@Tal): explosions\nmayay (@Maya): balloons\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
     CHECK(n.returnTimeline("Maya") == maya);
-    std::string lucy = "nat (@natalie): \nlucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nnat (@natalie): partayy\nlucky (@Lucy): bingo\ntal10 (@Tal): explosions\nmayay (@Maya): balloons\nnat (@natalie): hiyo\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
+    lucy = "nat (@natalie): \nlucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nnat (@natalie): partayy\nlucky (@Lucy): bingo\ntal10 (@Tal): explosions\nmayay (@Maya): balloons\nnat (@natalie): hiyo\ntom (@Tim): what is up???\nmayay (@Maya): hey y'all\n";
     CHECK(n.returnTimeline("Lucy") == lucy); //should return every post bc lucy follows everyone
-    std::string tim = "lucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nlucky (@Lucy): bingo\ntom (@Tim): what is up???\n";
+    tim = "lucky (@Lucy): yay!!\ntom (@Tim): Go Wildcats\nlucky (@Lucy): bingo\ntom (@Tim): what is up???\n";
     CHECK(n.returnTimeline("Tim") == tim);
-    std::string natalie = "nat (@natalie): \nlucky (@Lucy): yay!!\nnat (@natalie): partayy\nlucky (@Lucy): bingo\nnat (@natalie): hiyo\n";
+    natalie = "nat (@natalie): \nlucky (@Lucy): yay!!\nnat (@natalie): partayy\nlucky (@Lucy): bingo\nnat (@natalie): hiyo\n";
     CHECK(n.returnTimeline("natalie") == natalie);
-    std::string tal = "tal10 (@Tal): explosions\n";
+    tal = "tal10 (@Tal): explosions\n";
     CHECK(n.returnTimeline("Tal") == tal);
 
     CHECK(n.returnTimeline("ted") == "");
